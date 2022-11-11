@@ -18,7 +18,7 @@ class myCnn(nn.Module):
         super(myCnn,self).__init__()
         
         self.net_stack = nn.Sequential()
-        self.num_params_first_fc = 0
+        self.final_output_channels = 0
         for i in range(len(config)):
             layer = config[i]
 
@@ -39,14 +39,14 @@ class myCnn(nn.Module):
             if padding != "same":
                 if isinstance(padding,int):
                     padding = [padding,padding]
-                h = (int)((h - kernel[0])/stride[0])+1
-                w = (int)((w - kernel[1])/stride[1])+1
+                h = (int)((h - kernel[0] + 2 *padding[0])/stride[0])+1
+                w = (int)((w - kernel[1] + 2 *padding[0])/stride[1])+1
 
             if i == len(config)-1:
-                self.num_params_first_fc = num_out_channels
+                self.final_output_channels = num_out_channels
 
         self.net_stack.append(nn.Flatten())
-        self.net_stack.append(nn.Linear(self.num_params_first_fc*h*w,num_classes).to(device))
+        self.net_stack.append(nn.Linear(self.final_output_channels*h*w,num_classes).to(device))
         self.net_stack.append(nn.Softmax(1))
     
     def forward(self,x):
