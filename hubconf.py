@@ -167,4 +167,7 @@ def get_data_loaders():
 
 	return trainLoader,testLoader
 
+def get_loss_func():
+	 loss = custom_loss()
 
+	 return loss
