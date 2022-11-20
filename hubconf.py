@@ -1,11 +1,12 @@
 import torch
+import sklearn
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 import torch.nn.functional as Fun
-from torchmetrics import Precision, Recall, F1Score, Accuracy
-from torchmetrics.classification import accuracy
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+
 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -82,29 +83,17 @@ def test(dataloader, model, loss_fn):
     
     test_loss /= num_batches
     correct /= size
-    ypred = torch.cat(ypred)
-    ytrue = torch.cat(ytrue)
+    ypred = torch.cat(ypred).numpy()
+    ytrue = torch.cat(ytrue).numpy()
     
     
     print(f"\nAvg loss: {test_loss:>8f} \n")
-    
-    accuracy1 = Accuracy().to(device)
-    acc = accuracy1(ypred,ytrue).item()*100
-    print(f'Accuracy : {acc:.3f} %')
-    
-    precision = Precision(average = 'macro', num_classes = num_classes).to(device)
-    pre = precision(ypred,ytrue).item()
-    print(f'precision : {pre :.4f}')
-
-    recall = Recall(average = 'macro', num_classes = num_classes).to(device)
-    re = recall(ypred,ytrue).item()
-    print(f'recall : {re:.4f}')
-    
-    f1_score = F1Score(average = 'macro', num_classes = num_classes).to(device)
-    f1 = f1_score(ypred,ytrue).item()
-    print(f'f1_score : {f1: .4f}')
-
-    return acc,pre,re,f1
+    a = accuracy_score(ytrue,ypred)
+    p = precision_score(ytrue,ypred)
+    r = recall_score(ytrue,ypred)
+    f = f1_score(ytrue,ypred)
+   
+    return a,p,r,f
 
 
 def _train(trainloader,my_model,loss_fun,optimizer):
