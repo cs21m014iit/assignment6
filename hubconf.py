@@ -65,7 +65,7 @@ def custom_loss(ypred,ytrue):
 def test(dataloader, model, loss_fn):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
-    num_classes= len(dataloader.given_dataset.dataset.classes)
+    num_classes= len(dataloader.dataset.given_dataset.classes)
     model.eval()
     test_loss, correct = 0, 0
 
@@ -99,7 +99,7 @@ def test(dataloader, model, loss_fn):
 def _train(trainloader,my_model,loss_fun,optimizer):
     num_data_points = len(trainloader.dataset)
     num_batches = len(trainloader)
-    num_classes = len(trainloader.given_dataset.dataset.classes)
+    num_classes = len(trainloader.dataset.given_dataset.classes)
     my_model.train()
     train_loss = 0
     for batch , (X,y) in enumerate(trainloader):
@@ -131,7 +131,7 @@ def train(trainloader,my_model,epochs,learning_rate=1e-3):
 def get_model(trainloader,config,epochs,learning_rate):
     
     N , num_channels , height , width = next(iter(trainloader))[0].shape
-    num_classes = len(trainloader.given_dataset.dataset.classes)
+    num_classes = len(trainloader.dataset.given_dataset.classes)
     
     my_model = myCnn(num_channels,num_classes,height,width,config).to(device)
     
